@@ -26,12 +26,13 @@ weather = weather.text
 #Parse Data
 #Get indecies from current hour 
 start_ind = weather.index('"number": 1,')
-end_ind = weather.index('"icon": "https://api.weather.gov/icons/land/night/skc?size=small",')
+end_ind = weather.index('"icon": "https://api.weather.gov/icons/land/')
 
 
 current_weather = [None]*((end_ind-start_ind)+4)
 for i in range(start_ind,end_ind+4):
 	current_weather[i-start_ind] = weather[i]
+	counter = i;
 current_weather = ''.join(current_weather)
 
 #Parsing Current Weather Into Clean Output
@@ -40,7 +41,11 @@ temp = current_weather[temp_index + 7] + current_weather[temp_index + 8]
 windspeed_ind = current_weather.index('Speed": "')
 wind_speed = current_weather[windspeed_ind + 9] + ' mph'
 winddirect_ind = current_weather.index('Direction": "')
-wind_direction = current_weather[winddirect_ind + 13] + current_weather[winddirect_ind + 14] + current_weather[winddirect_ind + 15]
+wind_direction = [None]*3
+for i in range(13,15):
+	if current_weather[winddirect_ind + i] != '"':
+		wind_direction[i-13] = current_weather[winddirect_ind + i]
+
 
 #Get Local Time
 localtime = time.asctime( time.localtime(time.time()) )
@@ -50,8 +55,13 @@ print('\tCURRENT WEATHER\t -- LAT: ' + lat +  ", LONG: " + long)
 print(' ')
 print("\tTime: " +  localtime)
 print("\tTemperature: " + temp + "F")
-print("\tWind Speed: " + wind_speed) 
-print("\tWind Direction: " + wind_direction)
+print("\tWind Speed: " + wind_speed)
+if counter == 1:
+	print("\tWind Direction: " + wind_direction[0] + wind_direction[1])   
+elif counter == 2: 
+	print("\tWind Direction: " + wind_direction[0] + wind_direction[1] + wind_direction[2])
+else:
+	print("\tWind Direction: " + wind_direction[0])
 print('\n')
 
 
